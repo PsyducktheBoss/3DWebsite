@@ -19,9 +19,9 @@ scene.add(light);
 const loader = new GLTFLoader();
 loader.load('WebHouseTesty.glb', (gltf) => {
     scene.add(gltf.scene);
+      SpinningCube = gltf.scene.getObjectByName("spinningcube"); 
 }, undefined, (error) => {
     console.error(error);
-  SpinningCube = gltf.scene.getObjectByName("spinningcube"); 
 });
 
 camera.position.z = 5;
