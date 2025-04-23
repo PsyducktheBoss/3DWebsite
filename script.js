@@ -4,7 +4,6 @@ import { OrbitControls } from 'https://esm.sh/three/examples/jsm/controls/OrbitC
 let SpinningCube;
 
   SpinningCube = gltf.scene.getObjectByName("spinningcube"); 
-});
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -31,10 +30,10 @@ camera.position.z = 5;
 // Animate
 function animate() {
   requestAnimationFrame(animate);
-   if (SpinningCube) {
+  controls.update(); // 👈 add this
+    if (SpinningCube) {
     SpinningCube.rotation.y += 0.01; // spin on Y axis
   }
-  controls.update(); // 👈 add this
   renderer.render(scene, camera);
 }
 animate();
