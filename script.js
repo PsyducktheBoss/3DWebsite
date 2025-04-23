@@ -1,6 +1,27 @@
 import * as THREE from 'https://esm.sh/three';
 import { GLTFLoader } from 'https://esm.sh/three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'https://esm.sh/three/examples/jsm/controls/OrbitControls.js';
+let SpinningCube;
+
+// Load the model and get the part you want to spin
+const loader = new GLTFLoader();
+loader.load('WebHouseTesty.glb', (gltf) => {
+  scene.add(gltf.scene);
+  
+  // Let's say you want to spin the chimney or something
+  SpinningCube = gltf.scene.getObjectByName("spinningcube"); 
+});
+
+function animate() {
+  requestAnimationFrame(animate);
+  
+  if (SpinningCube) {
+    SpinningCube.rotation.y += 0.01; // spin on Y axis
+  }
+
+  renderer.render(scene, camera);
+}
+animate();
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -14,7 +35,7 @@ document.body.appendChild(renderer.domElement);
 const light = new THREE.HemisphereLight(0xffffff, 0x444444, 2);
 scene.add(light);
 
-// Load your GLB model
+// Load
 const loader = new GLTFLoader();
 loader.load('WebHouseTesty.glb', (gltf) => {
     scene.add(gltf.scene);
