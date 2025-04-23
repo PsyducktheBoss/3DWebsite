@@ -2,8 +2,7 @@ import * as THREE from 'https://esm.sh/three';
 import { GLTFLoader } from 'https://esm.sh/three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'https://esm.sh/three/examples/jsm/controls/OrbitControls.js';
 let SpinningCube;
-
-  SpinningCube = gltf.scene.getObjectByName("spinningcube"); 
+SpinningCube = gltf.scene.getObjectByName("spinningcube"); 
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -23,6 +22,7 @@ loader.load('WebHouseTesty.glb', (gltf) => {
     scene.add(gltf.scene);
 }, undefined, (error) => {
     console.error(error);
+  SpinningCube = gltf.scene.getObjectByName("spinningcube"); 
 });
 
 camera.position.z = 5;
