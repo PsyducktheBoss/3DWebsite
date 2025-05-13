@@ -26,18 +26,20 @@ loader.load('StudioStation9GLB.glb', (gltf) => {
 // OrbitControls Setup
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.enableZoom = false;       // ❌ Disable zoom
-controls.enablePan = false;        // ❌ Disable pan
+controls.enableZoom = false;       
+controls.enablePan = false;        
 controls.rotateSpeed = 0.5;
 controls.dampingFactor = 0.1;
 controls.target.set(0, 0, 0);
+controls.minPolarAngle = Math.PI / 2; 
+controls.maxPolarAngle = Math.PI / 2;
 camera.position.set(0, 0, 5);
 
+// Vertical drag to move camera up/down
 let isDragging = false;
 let previousMouseY = 0;
 const verticalLimit = { min: -2, max: 2 };
 
-// Custom vertical translation on drag
 renderer.domElement.addEventListener('mousedown', (e) => {
   isDragging = true;
   previousMouseY = e.clientY;
@@ -58,7 +60,7 @@ renderer.domElement.addEventListener('mousemove', (e) => {
   newY = Math.max(verticalLimit.min, Math.min(verticalLimit.max, newY));
   camera.position.y = newY;
 
-  // Update the target so the camera looks level
+  // Move OrbitControls' target to keep the view level
   controls.target.y = newY;
 });
 
