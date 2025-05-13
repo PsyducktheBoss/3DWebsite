@@ -1,14 +1,11 @@
 import * as THREE from 'https://esm.sh/three';
 import { GLTFLoader } from 'https://esm.sh/three/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from 'https://esm.sh/three/examples/jsm/controls/OrbitControls.js';
 
 let SpinningCube;
-let radius = 5;
-let theta = 0;
-camera.position.y = 1;
-
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
@@ -17,66 +14,65 @@ document.body.appendChild(renderer.domElement);
 const light = new THREE.HemisphereLight(0xffffff, 0x444444, 2);
 scene.add(light);
 
-// Load model
+// Load GLB
 const loader = new GLTFLoader();
 loader.load('StudioStation9GLB.glb', (gltf) => {
-    scene.add(gltf.scene);
-    SpinningCube = gltf.scene.getObjectByName("spinningcube");
+  scene.add(gltf.scene);
+  SpinningCube = gltf.scene.getObjectByName("spinningcube");
 }, undefined, (error) => {
-    console.error(error);
+  console.error(error);
 });
 
-// Orbit settings
-const target = new THREE.Vector3(0, 0, 0);
-let radius = 5;
-let theta = 0; // horizontal angle
-let phi = Math.PI / 2; // vertical angle (polar)
+// OrbitControls Setup
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.enableZoom = false;       // ❌ Disable zoom
+controls.enablePan = false;        // ❌ Disable pan
+controls.rotateSpeed = 0.5;
+controls.dampingFactor = 0.1;
+controls.target.set(0, 0, 0);
+camera.position.set(0, 0, 5);
 
-// Limits
-const verticalLimit = { min: -2, max: 2 }; // camera Y position limit
-
-// Mouse control state
 let isDragging = false;
-let previousMousePosition = { x: 0, y: 0 };
+let previousMouseY = 0;
+const verticalLimit = { min: -2, max: 2 };
 
-// Mouse events
+// Custom vertical translation on drag
 renderer.domElement.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    previousMousePosition = { x: e.clientX, y: e.clientY };
+  isDragging = true;
+  previousMouseY = e.clientY;
 });
 
 renderer.domElement.addEventListener('mouseup', () => {
-    isDragging = false;
+  isDragging = false;
 });
 
 renderer.domElement.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
+  if (!isDragging) return;
 
-    const deltaX = e.clientX - previousMousePosition.x;
-    const deltaY = e.clientY - previousMousePosition.y;
+  const deltaY = e.clientY - previousMouseY;
+  previousMouseY = e.clientY;
 
-    const rotateSpeed = 0.005;
-    const moveSpeed = 0.01;
+  const moveSpeed = 0.01;
+  let newY = camera.position.y - deltaY * moveSpeed;
+  newY = Math.max(verticalLimit.min, Math.min(verticalLimit.max, newY));
+  camera.position.y = newY;
 
-    // Horizontal drag → orbit left/right (theta)
-    theta -= deltaX * rotateSpeed;
-
-    // Vertical drag → move camera up/down linearly
-    let newY = camera.position.y - deltaY * moveSpeed;
-    newY = Math.max(verticalLimit.min, Math.min(verticalLimit.max, newY));
-    camera.position.y = newY;
-
-    previousMousePosition = { x: e.clientX, y: e.clientY };
+  // Update the target so the camera looks level
+  controls.target.y = newY;
 });
 
-// Disable zooming
 renderer.domElement.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
 
-// Animate and update camera
+// Animate
 function animate() {
-    requestAnimationFrame(animate);
+  requestAnimationFrame(animate);
+  controls.update();
 
-    // Convert polar coords to Cartesian for orbital movement
-    camera.position.x = radius * Math.sin(theta);
-    camera.position.z = radius * Math.cos(theta);
-    // camera
+  if (SpinningCube) {
+    SpinningCube.rotation.y += 0.01;
+  }
+
+  renderer.render(scene, camera);
+}
+animate();
