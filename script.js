@@ -38,7 +38,7 @@ camera.position.set(0, 0, 5);
 // Vertical drag to move camera up/down
 let isDragging = false;
 let previousMouseY = 0;
-const verticalLimit = { min: -2, max: 2 };
+const verticalLimit = { min: -4, max: 4 };
 
 renderer.domElement.addEventListener('mousedown', (e) => {
   isDragging = true;
