@@ -22,13 +22,20 @@ loader.load('StudioStation9GLB.glb', (gltf) => {
     console.error(error);
 });
 
-camera.position.set(0, 0, 5);
+// Orbit settings
+const target = new THREE.Vector3(0, 0, 0);
+let radius = 5;
+let theta = 0; // horizontal angle
+let phi = Math.PI / 2; // vertical angle (polar)
 
-// Custom camera controls
+// Limits
+const verticalLimit = { min: -2, max: 2 }; // camera Y position limit
+
+// Mouse control state
 let isDragging = false;
 let previousMousePosition = { x: 0, y: 0 };
-const verticalLimit = 2; // Max up/down movement
 
+// Mouse events
 renderer.domElement.addEventListener('mousedown', (e) => {
     isDragging = true;
     previousMousePosition = { x: e.clientX, y: e.clientY };
@@ -41,34 +48,31 @@ renderer.domElement.addEventListener('mouseup', () => {
 renderer.domElement.addEventListener('mousemove', (e) => {
     if (!isDragging) return;
 
-    const deltaMove = {
-        x: e.clientX - previousMousePosition.x,
-        y: e.clientY - previousMousePosition.y
-    };
+    const deltaX = e.clientX - previousMousePosition.x;
+    const deltaY = e.clientY - previousMousePosition.y;
 
-    // Horizontal movement → rotate camera around Y axis
-    const rotationSpeed = 0.005;
-    const deltaRotation = deltaMove.x * rotationSpeed;
-    camera.rotation.y -= deltaRotation;
-
-    // Vertical movement → move camera up/down within limit
+    const rotateSpeed = 0.005;
     const moveSpeed = 0.01;
-    let newY = camera.position.y - deltaMove.y * moveSpeed;
-    newY = Math.max(-verticalLimit, Math.min(verticalLimit, newY));
+
+    // Horizontal drag → orbit left/right (theta)
+    theta -= deltaX * rotateSpeed;
+
+    // Vertical drag → move camera up/down linearly
+    let newY = camera.position.y - deltaY * moveSpeed;
+    newY = Math.max(verticalLimit.min, Math.min(verticalLimit.max, newY));
     camera.position.y = newY;
 
     previousMousePosition = { x: e.clientX, y: e.clientY };
 });
 
-// Disable scroll wheel zoom
+// Disable zooming
 renderer.domElement.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
 
-// Animate
+// Animate and update camera
 function animate() {
     requestAnimationFrame(animate);
-    if (SpinningCube) {
-        SpinningCube.rotation.y += 0.01;
-    }
-    renderer.render(scene, camera);
-}
-animate();
+
+    // Convert polar coords to Cartesian for orbital movement
+    camera.position.x = radius * Math.sin(theta);
+    camera.position.z = radius * Math.cos(theta);
+    // camera
