@@ -30,7 +30,7 @@ controls.enableZoom = false;
 controls.enablePan = false;        
 controls.rotateSpeed = 0.5;
 controls.dampingFactor = 0.1;
-controls.target.set(0, 50, 0);
+controls.target.set(50, 0, 0);
 controls.minPolarAngle = Math.PI / 2; 
 controls.maxPolarAngle = Math.PI / 2;
 camera.position.set(0, 0, 5);
