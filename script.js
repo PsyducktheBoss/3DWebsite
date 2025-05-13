@@ -17,7 +17,7 @@ scene.add(light);
 
 // Load
 const loader = new GLTFLoader();
-loader.load('WebHouseTesty.glb', (gltf) => {
+loader.load('StudioStation9GLB.glb', (gltf) => {
     scene.add(gltf.scene);
       SpinningCube = gltf.scene.getObjectByName("spinningcube"); 
 }, undefined, (error) => {
