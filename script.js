@@ -56,7 +56,7 @@ renderer.domElement.addEventListener('mousemove', (e) => {
   previousMouseY = e.clientY;
 
   const moveSpeed = 0.01;
-  let newY = camera.position.y - deltaY * moveSpeed;
+  let newY = camera.position.y + deltaY * moveSpeed;
   newY = Math.max(verticalLimit.min, Math.min(verticalLimit.max, newY));
   camera.position.y = newY;
 
